@@ -1,6 +1,8 @@
-package de.tmasser.responsetemplates;
+package de.tmasser.responsetemplates.actionlisteners;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import de.tmasser.responsetemplates.windows.DefaultsWindow;
 
 
 public class MyActionListenerForDefaultsWindow implements ActionListener {

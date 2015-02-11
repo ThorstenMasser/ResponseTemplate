@@ -1,4 +1,4 @@
-package de.tmasser.responsetemplates;
+package de.tmasser.responsetemplates.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,6 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import de.tmasser.responsetemplates.MultiLingualEntry;
+import de.tmasser.responsetemplates.actionlisteners.MyActionListenerForEntryWindow;
 
 public class EntryWindow extends JFrame implements Runnable{
 	private static final long serialVersionUID = 1039118717845849069L;
@@ -34,7 +37,7 @@ public class EntryWindow extends JFrame implements Runnable{
 		this.setSize(new Dimension(600,375));
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		this.setTitle("Catalog - Entry");
+		this.setTitle("Response Templates - Entry");
 		this.textAreaBody = new JTextArea();
 		this.textAreaBody.setWrapStyleWord(true);
 		this.textAreaBody.setLineWrap(true);

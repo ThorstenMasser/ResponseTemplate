@@ -15,6 +15,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import de.tmasser.responsetemplates.windows.MainWindow;
+
 
 public class Catalog {
 	private static final String SETTINGS_ENTRY = "Data Folder (under home directory)";

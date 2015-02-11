@@ -1,4 +1,4 @@
-package de.tmasser.responsetemplates;
+package de.tmasser.responsetemplates.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -9,6 +9,12 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+
+import de.tmasser.responsetemplates.Catalog;
+import de.tmasser.responsetemplates.Defaults;
+import de.tmasser.responsetemplates.MultiLingualEntry;
+import de.tmasser.responsetemplates.Settings;
+import de.tmasser.responsetemplates.actionlisteners.MyActionListenerForMainWindow;
 
 
 public class MainWindow extends JFrame implements Runnable{
@@ -30,10 +36,10 @@ public class MainWindow extends JFrame implements Runnable{
 	@Override
 	public void run() {
 		MyActionListenerForMainWindow actionListener = new MyActionListenerForMainWindow(this);
-		this.setSize(new Dimension(896,560));
+		this.setSize(new Dimension(980,768));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		this.setTitle("Catalog");
+		this.setTitle("Response Templates");
 		this.comboTitles = new JComboBox<MultiLingualEntry>();
 		this.comboTitles.addActionListener(actionListener);
 		this.comboTitles.setActionCommand("comboTitles");
@@ -71,6 +77,9 @@ public class MainWindow extends JFrame implements Runnable{
 		JButton buttonExit = new JButton("Exit");
 		buttonExit.addActionListener(actionListener);
 		buttonExit.setActionCommand("buttonExit");
+		JButton buttonHelp = new JButton("?");
+		buttonHelp.addActionListener(actionListener);
+		buttonHelp.setActionCommand("buttonHelp");
 		
 		this.initComboTitles();
 		JPanel panelCombos = new JPanel();
@@ -85,6 +94,7 @@ public class MainWindow extends JFrame implements Runnable{
 		panelButtons.add(buttonDefaults);
 		panelButtons.add(buttonSettings);
 		panelButtons.add(buttonExit);
+		panelButtons.add(buttonHelp);
 		this.updateTextarea();
 		this.getContentPane().add(panelCombos, BorderLayout.NORTH);
 		this.getContentPane().add(textarea,BorderLayout.CENTER);

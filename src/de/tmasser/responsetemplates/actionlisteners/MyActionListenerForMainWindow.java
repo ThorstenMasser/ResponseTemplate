@@ -1,4 +1,4 @@
-package de.tmasser.responsetemplates;
+package de.tmasser.responsetemplates.actionlisteners;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -6,6 +6,13 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
+import de.tmasser.responsetemplates.MultiLingualEntry;
+import de.tmasser.responsetemplates.windows.DefaultsWindow;
+import de.tmasser.responsetemplates.windows.EntryWindow;
+import de.tmasser.responsetemplates.windows.HelpWindow;
+import de.tmasser.responsetemplates.windows.MainWindow;
+import de.tmasser.responsetemplates.windows.SettingsWindow;
 
 public class MyActionListenerForMainWindow implements ActionListener {
 
@@ -28,6 +35,7 @@ public class MyActionListenerForMainWindow implements ActionListener {
 			case "buttonExit" : this.actionButtonExit(); break;
 			case "comboTitles" : this.actionComboTitles(); break;
 			case "comboLanguages" : this.actionComboLanguages(); break;
+			case "buttonHelp" : this.actionButtonHelp(); break;
 			default: System.err.println("No actiond defined");
 		}
 	}
@@ -91,5 +99,10 @@ public class MyActionListenerForMainWindow implements ActionListener {
 	private void actionButtonSettings() {
 		SettingsWindow settingsWindow = new SettingsWindow(this.mainWindow);
 		SwingUtilities.invokeLater(settingsWindow);
+	}
+	
+	private void actionButtonHelp() {
+		HelpWindow helpWindow = new HelpWindow(this.mainWindow);
+		SwingUtilities.invokeLater(helpWindow);
 	}
 }

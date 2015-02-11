@@ -1,4 +1,4 @@
-package de.tmasser.responsetemplates;
+package de.tmasser.responsetemplates.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -12,22 +12,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import de.tmasser.responsetemplates.Defaults;
+import de.tmasser.responsetemplates.actionlisteners.MyActionListenerForDefaultsWindow;
 
-public class SettingsWindow extends JFrame implements Runnable {
-	private static final long serialVersionUID = -2565216451893426183L;
+
+public class DefaultsWindow extends JFrame implements Runnable {
+	private static final long serialVersionUID = -2565216451893426188L;
 	private MainWindow mainWindow;
 	private JPanel defaultsPanel;
 
-	public SettingsWindow(MainWindow mainWindow) {
+	public DefaultsWindow(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
-		this.defaultsPanel = this.getSettingsPanel();
+		this.defaultsPanel = this.getDefaultsPanel();
 	}
 	
 	@Override
 	public void run() {
-		this.setSize(new Dimension(800,200));
+		this.setSize(new Dimension(320,200));
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setTitle("Catalog - Defaults");
+		this.setTitle("Response Templates - Defaults");
 		this.setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(0,2));
@@ -40,8 +43,11 @@ public class SettingsWindow extends JFrame implements Runnable {
 		this.add(panel, BorderLayout.NORTH);
 		JScrollPane scroll = new JScrollPane(this.defaultsPanel);
 		this.add(scroll, BorderLayout.CENTER);
-		MyActionListenerForSettingsWindow actionListener = new MyActionListenerForSettingsWindow(this);
+		MyActionListenerForDefaultsWindow actionListener = new MyActionListenerForDefaultsWindow(this);
 		panel = new JPanel();
+		JButton buttonNew = new JButton("New");
+		buttonNew.addActionListener(actionListener);
+		buttonNew.setActionCommand("buttonNew");
 		JButton buttonSave = new JButton("Save");
 		buttonSave.addActionListener(actionListener);
 		buttonSave.setActionCommand("buttonSave");
@@ -49,42 +55,43 @@ public class SettingsWindow extends JFrame implements Runnable {
 		buttonCancel.addActionListener(actionListener);
 		buttonCancel.setActionCommand("buttonCancel");
 		panel.add(buttonSave);
+		panel.add(buttonNew);
 		panel.add(buttonCancel);
 		this.add(panel, BorderLayout.SOUTH);
 		this.setVisible(true);
 	}
 	
-	private JPanel getSettingsPanel() {
+	private JPanel getDefaultsPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(0,2));
-		Settings settings = this.mainWindow.getSettings();
-		Iterator<String> it = settings.keySet().iterator();
+		Defaults defaults = this.mainWindow.getDefaults();
+		Iterator<String> it = defaults.keySet().iterator();
 		while (it.hasNext()) {
 			String key = it.next();
-			String value = settings.get(key);
-			JTextField keyField = new JTextField(key);
-			keyField.setEditable(false);
-			JTextField valueField = new JTextField(value);
-			panel.add(keyField);
-			panel.add(valueField);
+			String value = defaults.get(key);
+			panel.add(new JTextField(key));
+			panel.add(new JTextField(value));
 		}
 		return panel;
 	}
 
 	public void saveEntry() {
-		Settings settings = this.mainWindow.getSettings();
-		settings.clear();
+		Defaults defaults = this.mainWindow.getDefaults();
+		defaults.clear();
 		for(int i=0;i<this.defaultsPanel.getComponentCount();i+=2) {
 			String key = ((JTextField)this.defaultsPanel.getComponent(i)).getText();
 			String value = ((JTextField)this.defaultsPanel.getComponent(i+1)).getText();
-			if (!key.equals("")) {
-				settings.put(Tools.realTrim(key), Tools.realTrim(value));
+			if (!key.equals("") && !value.equals("")) {
+				defaults.put(key, value);
 			}
 		}
-		settings.save();
+		defaults.save();
 	}
 
-	public void reload() {
-		this.mainWindow.reload();
+	public void addNewLine() {
+		this.defaultsPanel.add(new JTextField());
+		this.defaultsPanel.add(new JTextField());
+		this.defaultsPanel.revalidate();
 	}
+
 }
