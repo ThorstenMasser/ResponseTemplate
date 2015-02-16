@@ -1,33 +1,23 @@
 package de.tmasser.responsetemplates.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.TextArea;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
-import de.tmasser.responsetemplates.Defaults;
-import de.tmasser.responsetemplates.actionlisteners.MyActionListenerForDefaultsWindow;
 import de.tmasser.responsetemplates.actionlisteners.MyActionListenerForHelpWindow;
 
 
 public class HelpWindow extends JFrame implements Runnable {
 	private static final long serialVersionUID = -2565216451893426188L;
-	private MainWindow mainWindow;
 
-	public HelpWindow(MainWindow mainWindow) {
-		this.mainWindow = mainWindow;
+	public HelpWindow() {
 	}
 	
 	@Override

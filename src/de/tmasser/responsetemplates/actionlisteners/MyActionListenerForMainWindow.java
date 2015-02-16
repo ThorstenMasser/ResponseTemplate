@@ -101,7 +101,7 @@ public class MyActionListenerForMainWindow implements ActionListener {
 	}
 	
 	private void actionButtonHelp() {
-		HelpWindow helpWindow = new HelpWindow(this.mainWindow);
+		HelpWindow helpWindow = new HelpWindow();
 		SwingUtilities.invokeLater(helpWindow);
 	}
 }
