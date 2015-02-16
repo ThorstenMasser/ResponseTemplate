@@ -31,6 +31,7 @@ public class DefaultsWindow extends JFrame implements Runnable {
 		this.setSize(new Dimension(320,200));
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setTitle("Response Templates - Defaults");
+		this.setLocationRelativeTo(null);
 		this.setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(0,2));

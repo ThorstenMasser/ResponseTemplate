@@ -62,7 +62,6 @@ public class MyActionListenerForMainWindow implements ActionListener {
 			Toolkit.getDefaultToolkit ().getSystemClipboard().setContents (new StringSelection (text), null);
 			JOptionPane.showMessageDialog(null, "Text copied to clipboard",null,JOptionPane.PLAIN_MESSAGE);
 		}
-		
 	}
 
 	public void actionComboLanguages() {

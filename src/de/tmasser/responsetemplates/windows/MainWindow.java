@@ -40,6 +40,7 @@ public class MainWindow extends JFrame implements Runnable{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		this.setTitle("Response Templates");
+		this.setLocationRelativeTo(null);
 		this.comboTitles = new JComboBox<MultiLingualEntry>();
 		this.comboTitles.addActionListener(actionListener);
 		this.comboTitles.setActionCommand("comboTitles");

@@ -36,6 +36,7 @@ public class HelpWindow extends JFrame implements Runnable {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setTitle("Response Templates - Help");
 		this.setLayout(new BorderLayout());
+		this.setLocationRelativeTo(null);
 		MyActionListenerForHelpWindow actionListener = new MyActionListenerForHelpWindow(this);
 		JPanel panel = new JPanel();
 		JTextArea textAreaBody = new JTextArea();

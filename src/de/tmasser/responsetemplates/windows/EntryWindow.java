@@ -37,6 +37,7 @@ public class EntryWindow extends JFrame implements Runnable{
 		this.setSize(new Dimension(600,375));
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
+		this.setLocationRelativeTo(null);
 		this.setTitle("Response Templates - Entry");
 		this.textAreaBody = new JTextArea();
 		this.textAreaBody.setWrapStyleWord(true);
