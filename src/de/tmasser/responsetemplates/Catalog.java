@@ -2,7 +2,6 @@ package de.tmasser.responsetemplates;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
@@ -30,6 +29,7 @@ public class Catalog {
 	
 	public void load() {
 		SpreadsheetService service = new SpreadsheetService("Response Template");
+		if (this.mainWindow.getSetting("Username") == "" || this.mainWindow.getSetting("Password") == "") return;
 		try {
 			service.setUserCredentials(this.mainWindow.getSetting("Username"), this.mainWindow.getSetting("Password"));
 			URL metafeedUrl = new URL(this.spreadsheet_url);
@@ -67,14 +67,11 @@ public class Catalog {
 		    ListFeed feed = (ListFeed) service.getFeed(listFeedUrl, ListFeed.class);
 		    String title = "";
 		    String lang = "";
-		    String text = "";
-		    String user = "";
 		    Boolean found = false;
 		    for(ListEntry existingEntry : feed.getEntries()) {
 		    	for(String tag : existingEntry.getCustomElements().getTags()) {
 		    		if (tag.equals("title")) title = existingEntry.getCustomElements().getValue(tag);
 		    		if (tag.equals("language")) lang = existingEntry.getCustomElements().getValue(tag);
-		    		if (tag.equals("text")) text = existingEntry.getCustomElements().getValue(tag);
 		    	}
 		    	if (title.equals(entry.getTitle()) && lang.equals(language)) {
 		    		existingEntry.getCustomElements().setValueLocal("text",entry.getBody(lang));
@@ -85,8 +82,6 @@ public class Catalog {
 		    	}
 		    	title = "";
 		    	lang = "";
-		    	text = "";
-		    	user = "";
 		    }
 		    if (!found) {
 		    	ListEntry row = new ListEntry();
@@ -113,13 +108,11 @@ public class Catalog {
 		    ListFeed feed = (ListFeed) service.getFeed(listFeedUrl, ListFeed.class);
 		    String title = "";
 		    String lang = "";
-		    String text = "";
-		    String user = "";
+
 		    for(ListEntry existingEntry : feed.getEntries()) {
 		    	for(String tag : existingEntry.getCustomElements().getTags()) {
 		    		if (tag.equals("title")) title = existingEntry.getCustomElements().getValue(tag);
 		    		if (tag.equals("language")) lang = existingEntry.getCustomElements().getValue(tag);
-		    		if (tag.equals("text")) text = existingEntry.getCustomElements().getValue(tag);
 		    	}
 		    	if (title.equals(entry.getTitle()) && lang.equals(language)) {
 		    		existingEntry.delete();
@@ -127,8 +120,6 @@ public class Catalog {
 		    	}
 		    	title = "";
 		    	lang = "";
-		    	text = "";
-		    	user = "";
 		    }
 		} catch (IOException | ServiceException e) {
 			e.printStackTrace();
@@ -145,23 +136,15 @@ public class Catalog {
 		    SpreadsheetEntry spreadsheet = service.getEntry(metafeedUrl, SpreadsheetEntry.class);
 		    URL listFeedUrl = ((WorksheetEntry) spreadsheet.getWorksheets().get(0)).getListFeedUrl();
 		    ListFeed feed = (ListFeed) service.getFeed(listFeedUrl, ListFeed.class);
-		    String title = "";
-		    String lang = "";
-		    String text = "";
-		    String user = "";
+		    
 		    for(ListEntry existingEntry : feed.getEntries()) {
+		    	String title = "";
 		    	for(String tag : existingEntry.getCustomElements().getTags()) {
 		    		if (tag.equals("title")) title = existingEntry.getCustomElements().getValue(tag);
-		    		if (tag.equals("language")) lang = existingEntry.getCustomElements().getValue(tag);
-		    		if (tag.equals("text")) text = existingEntry.getCustomElements().getValue(tag);
 		    	}
 		    	if (title.equals(entry.getTitle())) {
 		    		existingEntry.delete();
 		    	}
-		    	title = "";
-		    	lang = "";
-		    	text = "";
-		    	user = "";
 		    }
 		} catch (IOException | ServiceException e) {
 			e.printStackTrace();

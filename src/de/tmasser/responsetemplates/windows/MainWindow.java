@@ -109,8 +109,11 @@ public class MainWindow extends JFrame implements Runnable{
 		for(MultiLingualEntry entry : this.catalog.getAllEntries()) {
 			comboBoxModel.addElement(entry);
 		}
-		this.comboTitles.setSelectedIndex(0);
-		this.initComboLanguage();
+		if (this.catalog.getAllEntries().size() > 0) {
+			this.comboTitles.setSelectedIndex(0);
+			this.initComboLanguage();
+		}
+		
 	}
 	
 	public void initComboLanguage() {
@@ -140,7 +143,8 @@ public class MainWindow extends JFrame implements Runnable{
 	}
 
 	public void updateTextarea() {
-		this.textarea.setText(((MultiLingualEntry)this.comboTitles.getSelectedItem()).getBody(((String)this.comboLanguages.getSelectedItem())));		
+		if (this.comboTitles.getSelectedItem() != null)
+			this.textarea.setText(((MultiLingualEntry)this.comboTitles.getSelectedItem()).getBody(((String)this.comboLanguages.getSelectedItem())));		
 	}
 
 	public Defaults getDefaults() {
