@@ -17,8 +17,8 @@ public class MyActionListenerForSettingsWindow implements ActionListener {
 		switch(e.getActionCommand()) {
 			case "buttonSave" : this.actionButtonSave(); break;
 			case "buttonCancel" : this.actionButtonCancel(); break;
-		default: System.err.println("No actiond defined");
-	}
+			default: System.err.println("No actiond defined");
+		}
 	}
 
 	private void actionButtonCancel() {

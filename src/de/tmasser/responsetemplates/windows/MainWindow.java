@@ -147,15 +147,10 @@ public class MainWindow extends JFrame implements Runnable{
 		return this.defaults;
 	}
 
-	public void saveCatalog() {
-		this.catalog.save();
+	public void addEntry(String title, String body, String language) {
+		MultiLingualEntry entry = this.catalog.add(title, body, language, true);
 		this.initComboTitles();
 		this.initComboLanguage();
-	}
-
-	public void addEntry(String title, String body, String language) {
-		MultiLingualEntry entry = this.catalog.add(title, body, language);
-		this.saveCatalog();
 		this.comboTitles.setSelectedItem(entry);
 		this.comboLanguages.setSelectedItem(language);
 	}
@@ -163,13 +158,15 @@ public class MainWindow extends JFrame implements Runnable{
 	public void delete() {
 		MultiLingualEntry entry = (MultiLingualEntry)this.comboTitles.getSelectedItem();
 		this.catalog.delete(entry, (String)this.comboLanguages.getSelectedItem());
-		this.saveCatalog();
+		this.initComboTitles();
+		this.initComboLanguage();
 		this.comboTitles.setSelectedItem(entry);
 	}
 
 	public void deleteAll() {
 		this.catalog.deleteAll((MultiLingualEntry)this.comboTitles.getSelectedItem());
-		this.saveCatalog();
+		this.initComboTitles();
+		this.initComboLanguage();
 	}
 
 	public Settings getSettings() {
@@ -184,5 +181,9 @@ public class MainWindow extends JFrame implements Runnable{
 
 	public String getSetting(String settingsEntry) {
 		return this.settings.get(settingsEntry);
+	}
+
+	public void saveEntry(MultiLingualEntry entry, String language) {
+		this.catalog.saveEntry(entry, language);
 	}
 }

@@ -1,96 +1,173 @@
 package de.tmasser.responsetemplates;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
+
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.spreadsheet.ListEntry;
+import com.google.gdata.data.spreadsheet.ListFeed;
+import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
+import com.google.gdata.data.spreadsheet.WorksheetEntry;
+import com.google.gdata.util.ServiceException;
 
 import de.tmasser.responsetemplates.windows.MainWindow;
 
 
 public class Catalog {
-	private static final String SETTINGS_ENTRY = "Data Folder (under home directory)";
-	private static final String DATA_FILENAME = "data_ml.xml";
-	
+	public String spreadsheet_url;	
 	private ArrayList<MultiLingualEntry> entries;
 	private MainWindow mainWindow;
 	
 	public Catalog(MainWindow mainWindow) {
 		this.entries = new ArrayList<>();
 		this.mainWindow = mainWindow;
+		this.spreadsheet_url = "https://spreadsheets.google.com/feeds/spreadsheets/" + this.mainWindow.getSetting("Spreadsheet ID");
 		this.load();
 	}
 	
 	public void load() {
-		XMLInputFactory f = XMLInputFactory.newInstance();
-		XMLStreamReader r;
-		
+		SpreadsheetService service = new SpreadsheetService("Response Template");
 		try {
-			String filename;
-			if ((this.mainWindow.getSetting(SETTINGS_ENTRY) == null) || (this.mainWindow.getSetting(SETTINGS_ENTRY).equals(""))) {
-				filename = DATA_FILENAME;
-			}
-			else {
-				filename = System.getProperty("user.home") + File.separator + URLDecoder.decode(this.mainWindow.getSetting(SETTINGS_ENTRY), "UTF-8") + File.separator + DATA_FILENAME; 
-			}
-			r = f.createXMLStreamReader(new FileReader(filename));
-			while(r.hasNext()) {
-			    r.next();
-			    if ((r.isStartElement()) && (r.getName().toString().toLowerCase().equals("entry"))) {
-			    	MultiLingualEntry entry = new MultiLingualEntry();
-			    	entry.readNextXMLEntry(r);
-			    	this.entries.add(entry);
+			service.setUserCredentials(this.mainWindow.getSetting("Username"), this.mainWindow.getSetting("Password"));
+			URL metafeedUrl = new URL(this.spreadsheet_url);
+		    SpreadsheetEntry spreadsheet = service.getEntry(metafeedUrl, SpreadsheetEntry.class);
+		    URL listFeedUrl = ((WorksheetEntry) spreadsheet.getWorksheets().get(0)).getListFeedUrl();
+		    ListFeed feed = (ListFeed) service.getFeed(listFeedUrl, ListFeed.class);
+		    String title = "";
+		    String lang = "";
+		    String text = "";
+		    for(ListEntry entry : feed.getEntries()) {
+		    	for(String tag : entry.getCustomElements().getTags()) {
+		    		if (tag.equals("title")) title = entry.getCustomElements().getValue(tag);
+		    		if (tag.equals("language")) lang = entry.getCustomElements().getValue(tag);
+		    		if (tag.equals("text")) text = entry.getCustomElements().getValue(tag);
 		    	}
-			}
-			r.close();
-		} catch (FileNotFoundException | XMLStreamException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		
-	}
-
-	public void save() {
-		XMLOutputFactory f = XMLOutputFactory.newInstance();
-		
-		try {
-			String filename;
-			if (this.mainWindow.getSetting(SETTINGS_ENTRY) == "") {
-				filename = DATA_FILENAME;
-			}
-			else {
-				filename = System.getProperty("user.home") + File.separator + URLDecoder.decode(this.mainWindow.getSetting(SETTINGS_ENTRY), "UTF-8") + File.separator + DATA_FILENAME; 
-			}
-			
-			XMLStreamWriter w = f.createXMLStreamWriter(new FileWriter(filename));
-			w.writeStartDocument();
-			w.writeCharacters("\n");
-			w.writeStartElement("catalog");
-			for(MultiLingualEntry entry : this.entries) {
-				entry.writeXML(w);
-			}
-			w.writeEndElement();
-			w.writeEndDocument();
-			w.flush();
-			w.close();
-		} catch (FileNotFoundException | XMLStreamException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		    	this.add(title, text, lang);
+		    	title = "";
+		    	lang = "";
+		    	text = "";
+		    }
+		} catch (IOException | ServiceException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	public void saveEntry(MultiLingualEntry entry, String language) {
+		SpreadsheetService service = new SpreadsheetService("Response Template");
+		try {
+			String username = this.mainWindow.getSetting("Username");
+			String password = this.mainWindow.getSetting("Password");
+			service.setUserCredentials(username, password);
+			URL metafeedUrl = new URL(this.spreadsheet_url);
+		    SpreadsheetEntry spreadsheet = service.getEntry(metafeedUrl, SpreadsheetEntry.class);
+		    URL listFeedUrl = ((WorksheetEntry) spreadsheet.getWorksheets().get(0)).getListFeedUrl();
+		    ListFeed feed = (ListFeed) service.getFeed(listFeedUrl, ListFeed.class);
+		    String title = "";
+		    String lang = "";
+		    String text = "";
+		    String user = "";
+		    Boolean found = false;
+		    for(ListEntry existingEntry : feed.getEntries()) {
+		    	for(String tag : existingEntry.getCustomElements().getTags()) {
+		    		if (tag.equals("title")) title = existingEntry.getCustomElements().getValue(tag);
+		    		if (tag.equals("language")) lang = existingEntry.getCustomElements().getValue(tag);
+		    		if (tag.equals("text")) text = existingEntry.getCustomElements().getValue(tag);
+		    	}
+		    	if (title.equals(entry.getTitle()) && lang.equals(language)) {
+		    		existingEntry.getCustomElements().setValueLocal("text",entry.getBody(lang));
+		    		existingEntry.getCustomElements().setValueLocal("username",username);
+		    		existingEntry.update();
+		    		found = true;
+		    		break;
+		    	}
+		    	title = "";
+		    	lang = "";
+		    	text = "";
+		    	user = "";
+		    }
+		    if (!found) {
+		    	ListEntry row = new ListEntry();
+			    row.getCustomElements().setValueLocal("title", entry.getTitle());
+			    row.getCustomElements().setValueLocal("language", language);
+			    row.getCustomElements().setValueLocal("text", entry.getBody(language));
+			    row.getCustomElements().setValueLocal("username", username);
+			    row = service.insert(listFeedUrl, row);
+		    }
+		} catch (IOException | ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void deleteLanguageEntry(MultiLingualEntry entry, String language) {
+		SpreadsheetService service = new SpreadsheetService("Response Template");
+		try {
+			String username = this.mainWindow.getSetting("Username");
+			String password = this.mainWindow.getSetting("Password");
+			service.setUserCredentials(username, password);
+			URL metafeedUrl = new URL(spreadsheet_url);
+		    SpreadsheetEntry spreadsheet = service.getEntry(metafeedUrl, SpreadsheetEntry.class);
+		    URL listFeedUrl = ((WorksheetEntry) spreadsheet.getWorksheets().get(0)).getListFeedUrl();
+		    ListFeed feed = (ListFeed) service.getFeed(listFeedUrl, ListFeed.class);
+		    String title = "";
+		    String lang = "";
+		    String text = "";
+		    String user = "";
+		    for(ListEntry existingEntry : feed.getEntries()) {
+		    	for(String tag : existingEntry.getCustomElements().getTags()) {
+		    		if (tag.equals("title")) title = existingEntry.getCustomElements().getValue(tag);
+		    		if (tag.equals("language")) lang = existingEntry.getCustomElements().getValue(tag);
+		    		if (tag.equals("text")) text = existingEntry.getCustomElements().getValue(tag);
+		    	}
+		    	if (title.equals(entry.getTitle()) && lang.equals(language)) {
+		    		existingEntry.delete();
+		    		break;
+		    	}
+		    	title = "";
+		    	lang = "";
+		    	text = "";
+		    	user = "";
+		    }
+		} catch (IOException | ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void deleteEntry(MultiLingualEntry entry) {
+		SpreadsheetService service = new SpreadsheetService("Print Google Spreadsheet Demo");
+		try {
+			String username = this.mainWindow.getSetting("Username");
+			String password = this.mainWindow.getSetting("Password");
+			service.setUserCredentials(username, password);
+			URL metafeedUrl = new URL(this.spreadsheet_url);
+		    SpreadsheetEntry spreadsheet = service.getEntry(metafeedUrl, SpreadsheetEntry.class);
+		    URL listFeedUrl = ((WorksheetEntry) spreadsheet.getWorksheets().get(0)).getListFeedUrl();
+		    ListFeed feed = (ListFeed) service.getFeed(listFeedUrl, ListFeed.class);
+		    String title = "";
+		    String lang = "";
+		    String text = "";
+		    String user = "";
+		    for(ListEntry existingEntry : feed.getEntries()) {
+		    	for(String tag : existingEntry.getCustomElements().getTags()) {
+		    		if (tag.equals("title")) title = existingEntry.getCustomElements().getValue(tag);
+		    		if (tag.equals("language")) lang = existingEntry.getCustomElements().getValue(tag);
+		    		if (tag.equals("text")) text = existingEntry.getCustomElements().getValue(tag);
+		    	}
+		    	if (title.equals(entry.getTitle())) {
+		    		existingEntry.delete();
+		    	}
+		    	title = "";
+		    	lang = "";
+		    	text = "";
+		    	user = "";
+		    }
+		} catch (IOException | ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public ArrayList<String> getAllTitles() {
 		ArrayList<String> list = new ArrayList<>();
 		for(MultiLingualEntry entry : this.entries) {
@@ -106,8 +183,11 @@ public class Catalog {
 		}
 		return list;
 	}
-
 	public MultiLingualEntry add(String title, String body, String language) {
+		return this.add(title, body, language, false);
+	}
+	
+	public MultiLingualEntry add(String title, String body, String language, boolean save) {
 		MultiLingualEntry entryFound = null;
 		
 		for(MultiLingualEntry entry : this.entries) {
@@ -124,19 +204,30 @@ public class Catalog {
 		else {
 			entryFound.addEntry(body, language);
 		}
+		if (save) {
+			this.saveEntry(entryFound, language);
+			System.out.println("Added");
+		}
 		
 		return entryFound;
 	}
 
 	public void delete(MultiLingualEntry entry, String language) {
 		if (JOptionPane.showConfirmDialog(null, "Are you sure to delete the entry for language '" + language + "' ?", "Attention", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			this.deleteLanguageEntry(entry, language);
 			entry.deleteLanguageEntry(language);
-			if (entry.getAllLanguages().size() == 0) this.entries.remove(entry);
+			if (entry.getAllLanguages().size() == 0) {
+				System.out.println("Delete whole entry");
+				this.entries.remove(entry);
+			}
+			
 		}
 	}
+	
 
 	public void deleteAll(MultiLingualEntry entry) {
 		if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the complete entry '"+ entry.getTitle() +"' ?", "Attention", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			this.deleteEntry(entry);
 			this.entries.remove(entry);
 		}
 	}

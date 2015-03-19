@@ -34,7 +34,7 @@ public class Settings extends HashMap<String, String> {
 				if ((r.isStartElement()) && (r.getName().toString().toLowerCase().equals("key"))) key = r.getElementText();
 				if ((r.isStartElement()) && (r.getName().toString().toLowerCase().equals("value"))) value = r.getElementText();
 				if (key != null && value != null) {
-					this.put(Tools.realTrim(key), Tools.realTrim(value));
+					this.put(Tools.realTrim(key), Tools.decrypt(Tools.realTrim(value)));
 					key = null;
 					value = null;
 				}
@@ -57,7 +57,7 @@ public class Settings extends HashMap<String, String> {
 			Iterator<String> it = this.keySet().iterator();
 			while (it.hasNext()) {
 				String key = it.next();
-				String value = this.get(key);
+				String value = Tools.encrypt(this.get(key));
 				w.writeCharacters("    ");
 				w.writeStartElement("entry");
 				w.writeCharacters("\n        ");

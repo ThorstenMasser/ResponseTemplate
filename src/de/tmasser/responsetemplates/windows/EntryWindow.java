@@ -78,10 +78,10 @@ public class EntryWindow extends JFrame implements Runnable{
 		else {
 			this.entry.setTitle(this.textFieldTitle.getText());
 			this.entry.setBody(this.textAreaBody.getText(), this.language);
-			this.mainWindow.saveCatalog();
 			this.mainWindow.updateTextarea();
 			this.mainWindow.getComboTitles().setSelectedItem(this.entry);
 			this.mainWindow.getComboLanguages().setSelectedItem(this.language);
+			this.mainWindow.saveEntry(this.entry, this.language);
 		}
 	}
 }

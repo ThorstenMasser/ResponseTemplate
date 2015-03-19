@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -69,7 +70,13 @@ public class SettingsWindow extends JFrame implements Runnable {
 			String value = settings.get(key);
 			JTextField keyField = new JTextField(key);
 			keyField.setEditable(false);
-			JTextField valueField = new JTextField(value);
+			JTextField valueField;
+			if(key.toLowerCase().contains("password")) {
+				valueField = new JPasswordField(value);
+			}
+			else {
+				valueField = new JTextField(value);
+			}
 			panel.add(keyField);
 			panel.add(valueField);
 		}
