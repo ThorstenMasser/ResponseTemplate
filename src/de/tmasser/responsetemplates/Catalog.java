@@ -2,6 +2,7 @@ package de.tmasser.responsetemplates;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
@@ -164,6 +165,8 @@ public class Catalog {
 		for(MultiLingualEntry entry : this.entries) {
 			list.add(entry);
 		}
+		Collections.sort(list);
+		
 		return list;
 	}
 	public MultiLingualEntry add(String title, String body, String language) {

@@ -31,6 +31,7 @@ public class MyActionListenerForMainWindow implements ActionListener {
 			case "buttonDelete" : this.actionButtonDelete(); break;
 			case "buttonDeleteAll" : this.actionButtonDeleteAll(); break;
 			case "buttonDefaults" : this.actionButtonDefaults(); break;
+			case "buttonReload" : this.actionButtonReload(); break;
 			case "buttonSettings" : this.actionButtonSettings(); break;
 			case "buttonExit" : this.actionButtonExit(); break;
 			case "comboTitles" : this.actionComboTitles(); break;
@@ -39,6 +40,7 @@ public class MyActionListenerForMainWindow implements ActionListener {
 			default: System.err.println("No actiond defined");
 		}
 	}
+
 
 	private void actionButtonExit() {
 		System.exit(0);
@@ -64,6 +66,10 @@ public class MyActionListenerForMainWindow implements ActionListener {
 		}
 	}
 
+	private void actionButtonReload() {
+		this.mainWindow.reload();
+	}
+	
 	public void actionComboLanguages() {
 		this.mainWindow.updateTextarea();
 	}

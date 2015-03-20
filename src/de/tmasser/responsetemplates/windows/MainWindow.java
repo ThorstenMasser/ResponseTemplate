@@ -36,7 +36,7 @@ public class MainWindow extends JFrame implements Runnable{
 	@Override
 	public void run() {
 		MyActionListenerForMainWindow actionListener = new MyActionListenerForMainWindow(this);
-		this.setSize(new Dimension(980,768));
+		this.setSize(new Dimension(1200,800));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		this.setTitle("Response Templates");
@@ -72,6 +72,9 @@ public class MainWindow extends JFrame implements Runnable{
 		JButton buttonDefaults = new JButton("Defaults");
 		buttonDefaults.addActionListener(actionListener);
 		buttonDefaults.setActionCommand("buttonDefaults");
+		JButton buttonReload = new JButton("Reload");
+		buttonReload.addActionListener(actionListener);
+		buttonReload.setActionCommand("buttonReload");
 		JButton buttonSettings = new JButton("Settings");
 		buttonSettings.addActionListener(actionListener);
 		buttonSettings.setActionCommand("buttonSettings");
@@ -93,6 +96,7 @@ public class MainWindow extends JFrame implements Runnable{
 		panelButtons.add(buttonDelete);
 		panelButtons.add(buttonDeleteAll);
 		panelButtons.add(buttonDefaults);
+		panelButtons.add(buttonReload);
 		panelButtons.add(buttonSettings);
 		panelButtons.add(buttonExit);
 		panelButtons.add(buttonHelp);
@@ -181,6 +185,8 @@ public class MainWindow extends JFrame implements Runnable{
 		this.defaults.reload();
 		this.settings.reload();
 		this.catalog.reload();
+		this.initComboTitles();
+		this.initComboLanguage();
 	}
 
 	public String getSetting(String settingsEntry) {

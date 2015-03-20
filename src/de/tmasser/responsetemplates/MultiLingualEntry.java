@@ -1,16 +1,16 @@
 package de.tmasser.responsetemplates;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 
-public class MultiLingualEntry {
+public class MultiLingualEntry implements Comparable<MultiLingualEntry>{
 	private String title;
-	private HashMap<String, String> body;
+	private TreeMap<String, String> body;
 	
 	public MultiLingualEntry(String title, String body, String language) {
 		this();
@@ -19,7 +19,7 @@ public class MultiLingualEntry {
 	}
 
 	public MultiLingualEntry() {
-		this.body = new HashMap<String, String>();
+		this.body = new TreeMap<String, String>();
 	}
 
 	public String getTitle() {
@@ -125,5 +125,10 @@ public class MultiLingualEntry {
 
 	public void addEntry(String body, String language) {
 		this.body.put(language,  body);
+	}
+
+	@Override
+	public int compareTo(MultiLingualEntry o) {
+		return this.getTitle().compareTo(o.getTitle());
 	}
 }
